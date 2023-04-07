@@ -1,0 +1,34 @@
+version: '3'
+services:
+  db:
+    container_name: db
+    image: postgis/postgis
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=map_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgresadmin7
+  backend:
+    build:
+      context: ./backend
+      dockerfile: DockerfileBackend
+    ports:
+      - "5000:5000"
+    container_name: backend
+    volumes:
+      - ./backend:/usr/src/app/backend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: DockerfileFrontend
+    ports:
+      - "8080:8080"
+    container_name: frontend
+    volumes:
+       - ./frontend:/usr/src/app/frontend
+       - /usr/src/app/frontend/node_modules
+volumes:
+  postgres_data:
