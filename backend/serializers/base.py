@@ -3,7 +3,7 @@ from abc import ABC
 
 class GeojsonBase(ABC):
 
-    def __init__(self):
+    def __init__(self, geometry: str):
         self.struct = {"type": "FeatureCollection",
                        "crs": {"type": "name",
                                "properties": {"name":
@@ -15,10 +15,10 @@ class GeojsonBase(ABC):
         self.feature = {"type": "Feature",
                         "properties": {},
                         "geometry": {"type":
-                                     "MultiPolygon",
+                                     f"{geometry}",
                                      "coordinates": [[[]]]
                                      }
                         }
 
-    def serialize(self, obj):
+    async def serialize(self, obj):
         pass

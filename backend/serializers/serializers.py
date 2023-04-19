@@ -1,11 +1,11 @@
 from .geojson_serializers import MultiPolygonsSerializer
 from sqlalchemy.engine.result import ScalarResult
 
-mp = MultiPolygonsSerializer()
+mp = MultiPolygonsSerializer("MultiPolygon")
 
 
-def poly_to_geojson(db_data: ScalarResult):
-    return mp.serialize(db_data)
+async def poly_to_geojson(db_data: ScalarResult):
+    return await mp.serialize(db_data)
 
 
 
