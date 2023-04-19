@@ -1,4 +1,5 @@
 import copy
+import json
 
 from .base import GeojsonBase
 from utils import get_coordinates
