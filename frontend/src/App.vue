@@ -10,7 +10,9 @@
       </l-tile-layer>
       <l-geo-json
        :show="showPoly"
-       :geojson="geojsonPoly">
+       :geojson="geojsonPoly"
+       :options="options"
+       ref="polyLayer">
 
       </l-geo-json>
     </l-map>
@@ -33,13 +35,47 @@ export default {
     return {
       showPoly: true,
       geojsonPoly: null,
+      prevLayerClicked: null
     }
   },
   methods: {
-    
+    onEachFeatureFunction(feature, layer) {
+
+      layer.bindTooltip(
+        "<div>" +
+          feature.properties.id +
+          "</div>",
+        { permanent: false, sticky: true }
+      );
+      layer.on({
+        click: this.objectClickHandler
+      });
+      //layer.on("mouseover", function(e){
+        //layer.setIcon(icons.iconSelected);
+      //});
+      //layer.on("mouseout", function(e){
+        //layer.setIcon(icons.iconStable);
+      //});
+    },
+    objectClickHandler(e){
+      this.selObjectsStyles(e.target);
+    },
+    selObjectsStyles(clickedLayer){
+      if(this.prevLayerClicked){
+        this.prevLayerClicked.setStyle({opacity: 1});
+      }
+      clickedLayer.setStyle({opacity: 0.3})
+      this.prevLayerClicked = clickedLayer
+    }
     
   },
-
+  computed:{
+    options (){
+      return {
+        onEachFeature: this.onEachFeatureFunction,
+      };
+    },
+  },
   async created() {
     this.geojsonPoly = await getPoly();
   }
