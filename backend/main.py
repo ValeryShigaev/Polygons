@@ -2,7 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from db import poly_manager as pm
-from serializers import poly_to_geojson
+from db import point_manager as ptm
+from serializers import poly_to_geojson, points_to_geojson
 
 
 app = FastAPI()
@@ -21,6 +22,11 @@ app.add_middleware(
 async def get_poly():
     db_data = await pm.get_polygons()
     return await poly_to_geojson(db_data)
+
+@app.get("/places")
+async def get_places():
+    db_data = await ptm.get_places()
+    return await points_to_geojson(db_data)
 
 
 
