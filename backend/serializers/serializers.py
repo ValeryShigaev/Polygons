@@ -10,7 +10,8 @@ async def poly_to_geojson(db_data: ScalarResult):
 
 
 async def points_to_geojson(db_data: ScalarResult):
-    return await mpt.serialize(db_data)
+    return await mpt.serialize(db_data,
+                               ["id", "name", "pop_max", "featurecla"])
 
 
 

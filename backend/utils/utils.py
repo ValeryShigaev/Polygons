@@ -8,7 +8,10 @@ from geoalchemy2.elements import WKBElement
 from geoalchemy2.shape import to_shape
 
 
-def get_coordinates(geom: WKBElement) -> List:
+def get_coordinates(geom: WKBElement, geom_name: str) -> List:
     bytes_geom = unhexlify(str(geom))
     wkb_geom = wkb.loads(bytes_geom)
-    return mapping(wkb_geom)["coordinates"][0][0]
+    if geom_name == "MultiPolygon":
+        return mapping(wkb_geom)["coordinates"][0][0]
+    elif geom_name == "MultiPoint":
+        return mapping(wkb_geom)["coordinates"]
