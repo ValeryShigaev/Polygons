@@ -8,16 +8,16 @@ from sqlalchemy.engine.result import ScalarResult
 
 class MultiPolygonsSerializer(GeojsonBase):
 
-    async def serialize(self, obj: ScalarResult):
-        geojson = copy.deepcopy(self.struct)
-        for polygon in list(obj):
-            new_feature = copy.deepcopy(self.pol_feature)
-            new_feature["properties"]["id"] = polygon.id
-            for c in get_coordinates(polygon.geom, "Polygon"):
-                new_feature["geometry"]["coordinates"][0][0].append(list(c))
-            geojson["features"].append(new_feature)
-        return geojson
-
+    async def serialize(self, *args):
+        # geojson = copy.deepcopy(self.struct)
+        # for polygon in list(obj):
+        #     new_feature = copy.deepcopy(self.pol_feature)
+        #     new_feature["properties"]["id"] = polygon.id
+        #     for c in get_coordinates(polygon.geom, "Polygon"):
+        #         new_feature["geometry"]["coordinates"][0][0].append(list(c))
+        #     geojson["features"].append(new_feature)
+        # return geojson
+        return await super().serialize(*args)
 
 
 class MultiPointsSerializer(GeojsonBase):
@@ -38,4 +38,3 @@ class MultiPointsSerializer(GeojsonBase):
     #     return geojson
     async def serialize(self, *args):
         return await super().serialize(*args)
-

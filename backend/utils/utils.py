@@ -13,5 +13,5 @@ def get_coordinates(geom: WKBElement, geom_name: str) -> List:
     wkb_geom = wkb.loads(bytes_geom)
     if geom_name == "MultiPolygon":
         return mapping(wkb_geom)["coordinates"][0][0]
-    elif geom_name == "MultiPoint":
+    elif geom_name == "Point":
         return mapping(wkb_geom)["coordinates"]
