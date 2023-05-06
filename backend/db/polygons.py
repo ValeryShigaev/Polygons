@@ -7,9 +7,12 @@ from .base import BaseManager
 
 class PolyManager(BaseManager):
 
-    async def get_polygons(self) -> ScalarResult:
+    async def get_polygons(self, fid: int = None) -> ScalarResult:
         async with self.async_session() as session:
             async with session.begin():
-                statement = (select(Poly))
+                if fid:
+                    statement = select(Poly).where(Poly.id == fid)
+                else:
+                    statement = select(Poly)
                 polygons = await session.execute(statement)
         return polygons.scalars()

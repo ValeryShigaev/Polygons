@@ -31,6 +31,13 @@ async def get_places():
     return await points_to_geojson(db_data)
 
 
+@app.get("/poly_info/{poly_id}")
+async def poly_info(poly_id: int):
+    print(poly_id)
+    db_data = await pm.get_polygons(fid=poly_id)
+    print(db_data)
+
+
 
 # @app.get("/items/{item_id}")
 # def read_item(item_id: int, q: Union[str, None] = None):
