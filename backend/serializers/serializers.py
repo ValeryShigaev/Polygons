@@ -1,8 +1,8 @@
-from .geojson_serializers import MultiPolygonsSerializer, MultiPointsSerializer
+from .geojson_serializers import Serializer
 from sqlalchemy.engine.result import ScalarResult
 
-mp = MultiPolygonsSerializer("MultiPolygon")
-mpt = MultiPointsSerializer("Point")
+mp = Serializer("MultiPolygon")
+mpt = Serializer("Point")
 
 
 async def poly_to_geojson(db_data: ScalarResult):

@@ -18,10 +18,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 @app.get("/")
 async def get_poly():
     db_data = await pm.get_polygons()
     return await poly_to_geojson(db_data)
+
 
 @app.get("/places")
 async def get_places():

@@ -1,12 +1,36 @@
-from abc import ABC
 import copy
 
 from sqlalchemy.engine.result import ScalarResult
 
 from utils import get_coordinates
+from .exceptions import serializer_control
 
 
 class GeojsonBase:
+    """
+    This class is used to serialize such geometry as Points and Multipolygons
+    which are stored in a Postgres database with the PostGIS extension. During
+    initialization, the geometry type is Point or Multipolygon. The serialize
+    method receives data of the ScalarResult type as input, as well as a list
+    of fields that need to be serialized.
+    Args:
+        geometry: Point or MultiPolygon
+        :type geometry: str
+        struct: GeoJson structure
+        :type struct: dict
+        pol_feature: structure of Multipolygon feature
+        :type pol_feature: dict
+        pt_feature: structure of Point feature
+        :type pt_feature: dict
+    Methods:
+        serialize: this method used to serialize ScalarResult to GeoJson,
+            receives data of the ScalarResult type as input, as well as a list
+            of fields that need to be serialized
+        serialize_feature: creates separate features for each feature in
+            the data
+        get_values: this class method returns a dict of model fields and values
+        check_geometry: checks if geometry supported
+    """
 
     def __init__(self, geometry: str):
         self.geometry = geometry
@@ -32,8 +56,10 @@ class GeojsonBase:
                                         "coordinates": []
                                         }
                            }
+        self.check_geometry()
 
-    async def serialize(self, obj: ScalarResult, fields: list[str]):
+    @serializer_control
+    async def serialize(self, obj: ScalarResult, fields: list[str]) -> dict:
         geojson = copy.deepcopy(self.struct)
         for feature in list(obj):
             if self.geometry == "Point":
@@ -63,13 +89,12 @@ class GeojsonBase:
                 new_feature["geometry"]["coordinates"][0][0].append(c)
         return new_feature
 
-
     @classmethod
-    async def get_values(cls, model):
+    async def get_values(cls, model) -> dict:
         return dict((column.name, getattr(model, column.name))
                     for column in model.__table__.columns)
 
-
-
-
-
+    def check_geometry(self):
+        if self.geometry not in ["MultiPolygon", "Point"]:
+            raise Exception("Only 'Point' or 'MultiPolygon' types "
+                            "are supported")
