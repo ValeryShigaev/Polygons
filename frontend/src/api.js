@@ -8,3 +8,23 @@ export async function getPoly(){
         //return false
     //}
 }
+export async function getPlaces(){
+    const url = "http://0.0.0.0:5000/places"
+    const response = await fetch(url, {headers: {"access": "application/json", "Content-Type": "application/json", "Access-Control-Allow-Origin": "*"}})
+    
+    //if(response.status == 200){
+        return response.json();
+    //}else{
+        //return false
+    //}
+}
+export async function getPolyData(){
+    const url = "http://0.0.0.0:5000/places"
+    const response = await fetch(url, {headers: {"access": "application/json", "Content-Type": "application/json", "Access-Control-Allow-Origin": "*"}})
+    
+    //if(response.status == 200){
+        return response.json();
+    //}else{
+        //return false
+    //}
+}

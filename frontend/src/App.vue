@@ -2,7 +2,7 @@
   <div class="container">
     <l-map style="height: 700px;" 
       :zoom=6 
-      :center=[29.981272,29.105190] 
+      :center=[29.981272,29.105190]
       ref="map">
       <l-tile-layer 
        :visible=true            
@@ -13,9 +13,13 @@
        :geojson="geojsonPoly"
        :options="options"
        ref="polyLayer">
-
       </l-geo-json>
     </l-map>
+    <template v-if="showPopup">
+      <div class="popup">
+
+      </div>
+    </template>
   </div>
 </template>
 
@@ -35,6 +39,8 @@ export default {
     return {
       showPoly: true,
       geojsonPoly: null,
+      geojsonPoints: null,
+      showPopup: false,
       prevLayerClicked: null
     }
   },
@@ -59,6 +65,7 @@ export default {
     },
     objectClickHandler(e){
       this.selObjectsStyles(e.target);
+      console.log(e.target.feature.properties.id);
     },
     selObjectsStyles(clickedLayer){
       if(this.prevLayerClicked){
@@ -66,6 +73,9 @@ export default {
       }
       clickedLayer.setStyle({opacity: 0.3})
       this.prevLayerClicked = clickedLayer
+    },
+    getPolyInfo(id){
+      
     }
     
   },
@@ -75,6 +85,13 @@ export default {
         onEachFeature: this.onEachFeatureFunction,
       };
     },
+  },
+  watch:{
+    prevLayerClicked(){
+      if (this.prevLayerClicked){
+        this.showPopup = true;
+      }
+    }
   },
   async created() {
     this.geojsonPoly = await getPoly();
