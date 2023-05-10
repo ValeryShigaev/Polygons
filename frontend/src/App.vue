@@ -17,7 +17,8 @@
     </l-map>
     <template v-if="showPopup">
       <div class="popup">
-
+          {{ places }}
+          {{ pop }}
       </div>
     </template>
   </div>
@@ -25,7 +26,7 @@
 
 <script>
 import { LMap, LTileLayer, LGeoJson } from 'vue2-leaflet';
-import { getPoly } from './api.js';
+import { getPoly, getPolyData } from './api.js';
 import 'leaflet/dist/leaflet.css';
 
 export default {
@@ -41,7 +42,9 @@ export default {
       geojsonPoly: null,
       geojsonPoints: null,
       showPopup: false,
-      prevLayerClicked: null
+      prevLayerClicked: null,
+      places: null,
+      pop: null
     }
   },
   methods: {
@@ -74,7 +77,7 @@ export default {
       clickedLayer.setStyle({opacity: 0.3})
       this.prevLayerClicked = clickedLayer
     },
-    getPolyInfo(id){
+    getPolyInfo(){
       
     }
     
@@ -87,9 +90,12 @@ export default {
     },
   },
   watch:{
-    prevLayerClicked(){
+    async prevLayerClicked(){
       if (this.prevLayerClicked){
         this.showPopup = true;
+        const selInfo = await getPolyData(this.prevLayerClicked.feature.properties.id)
+        this.places = selInfo.places
+        this.pop = selInfo.pop
       }
     }
   },

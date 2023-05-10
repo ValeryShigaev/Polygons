@@ -18,8 +18,8 @@ export async function getPlaces(){
         //return false
     //}
 }
-export async function getPolyData(){
-    const url = "http://0.0.0.0:5000/places"
+export async function getPolyData(fid){
+    const url = `http://0.0.0.0:5000/poly_info/${fid}`
     const response = await fetch(url, {headers: {"access": "application/json", "Content-Type": "application/json", "Access-Control-Allow-Origin": "*"}})
     
     //if(response.status == 200){
