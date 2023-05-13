@@ -17,8 +17,26 @@
     </l-map>
     <template v-if="showPopup">
       <div class="popup">
-          {{ places }}
-          {{ pop }}
+        <div class="popup_container">
+          <h5>Places:</h5>
+          <ul class="places_list">
+            <li class="place"
+             v-for="place in places"
+             :key="place"
+            >{{ place }}</li>
+          </ul>
+          <span class="pop">Population: {{ pop }}</span>
+          <template
+            v-if="loading"
+            >
+              <div class="loading_container">
+                  <span class="preloader__item preloader__item1"></span>
+                  <span class="preloader__item preloader__item2"></span>
+                  <span class="preloader__item preloader__item3"></span>
+                  <span class="preloader__item preloader__item4"></span>
+              </div>
+          </template>
+        </div>
       </div>
     </template>
   </div>
@@ -43,6 +61,7 @@ export default {
       geojsonPoints: null,
       showPopup: false,
       prevLayerClicked: null,
+      loading: false,
       places: null,
       pop: null
     }
@@ -92,11 +111,17 @@ export default {
   watch:{
     async prevLayerClicked(){
       if (this.prevLayerClicked){
+        this.loading = true;
         this.showPopup = true;
         const selInfo = await getPolyData(this.prevLayerClicked.feature.properties.id)
         this.places = selInfo.places
         this.pop = selInfo.pop
+        if(selInfo){
+          this.loading = false;
+        }
       }
+      
+      
     }
   },
   async created() {
