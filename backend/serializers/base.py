@@ -82,7 +82,8 @@ class GeojsonBase:
         for field in fields:
             f_fields = await self.get_values(feature)
             new_feature["properties"][field] = f_fields[field]
-        for c in get_coordinates(feature.geom, self.geometry):
+        coordinates = await get_coordinates(feature.geom, self.geometry)
+        for c in coordinates:
             if self.geometry == "Point":
                 new_feature["geometry"]["coordinates"].append(c)
             elif self.geometry == "MultiPolygon":

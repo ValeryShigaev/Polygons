@@ -1,5 +1,5 @@
 from .base import GeojsonBase
-from utils import get_coordinates
+from utils import get_coordinates, get_intersection_indexes
 from db import point_manager as ptm
 
 from shapely.geometry import Point
@@ -22,17 +22,7 @@ class Serializer(GeojsonBase):
 
     @classmethod
     async def get_indexes(cls, polygon, points):
-        coords = list()
-        for item in list(polygon):
-            coords = list(get_coordinates(item.geom, "MultiPolygon"))[:-1]
-        temp_polygon = Polygon(coords)
-        points_list = list()
-        for item in list(points):
-            coords = list(get_coordinates(item.geom, "Point"))
-            points_list.append(Point(coords))
-        indexes = list()
-        for index, point in enumerate(points_list, 1):
-            if temp_polygon.contains(point):
-                indexes.append(index)
+        indexes = await get_intersection_indexes(list(polygon),
+                                                 list(points),)
         return indexes
 
