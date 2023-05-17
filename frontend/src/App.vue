@@ -14,6 +14,11 @@
        :options="options"
        ref="polyLayer">
       </l-geo-json>
+      <l-marker 
+        v-for="vertex, index in vertexes"
+        :key="index"
+        :lat-lng="vertex">
+      </l-marker>
     </l-map>
     <template v-if="showPopup">
       <div class="popup">
@@ -43,7 +48,7 @@
 </template>
 
 <script>
-import { LMap, LTileLayer, LGeoJson } from 'vue2-leaflet';
+import { LMap, LTileLayer, LGeoJson, LMarker } from 'vue2-leaflet';
 import { getPoly, getPolyData } from './api.js';
 import 'leaflet/dist/leaflet.css';
 
@@ -53,6 +58,7 @@ export default {
     'l-map': LMap,
     'l-tile-layer': LTileLayer,
     'l-geo-json': LGeoJson,
+    'l-marker': LMarker,
   },
   data() {
     return {
@@ -63,7 +69,8 @@ export default {
       prevLayerClicked: null,
       loading: false,
       places: null,
-      pop: null
+      pop: null,
+      vertexes: null,
     }
   },
   methods: {
@@ -88,6 +95,12 @@ export default {
     objectClickHandler(e){
       this.selObjectsStyles(e.target);
       console.log(e.target.feature.properties.id);
+      const polyVertexes = Array.from(e.target.feature.geometry.coordinates[0][0]);
+      polyVertexes.forEach(element => {
+        element.reverse()
+      });
+      this.vertexes = polyVertexes
+      console.log(JSON.stringify(this.vertexes));
     },
     selObjectsStyles(clickedLayer){
       if(this.prevLayerClicked){
