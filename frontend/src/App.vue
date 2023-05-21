@@ -17,7 +17,8 @@
       <l-marker 
         v-for="vertex, index in vertexes"
         :key="index"
-        :lat-lng="vertex">
+        :lat-lng="vertex"
+        :icon="vertexIcon">
       </l-marker>
     </l-map>
     <template v-if="showPopup">
@@ -48,7 +49,8 @@
 </template>
 
 <script>
-import { LMap, LTileLayer, LGeoJson, LMarker } from 'vue2-leaflet';
+import { LMap, LTileLayer, LGeoJson, LMarker, } from 'vue2-leaflet';
+import { icon } from "leaflet";
 import { getPoly, getPolyData } from './api.js';
 import 'leaflet/dist/leaflet.css';
 
@@ -71,6 +73,10 @@ export default {
       places: null,
       pop: null,
       vertexes: null,
+      vertexIcon: icon({
+        iconUrl: 'vertex-icon.png',
+        iconSize: [10, 10],
+      }),
     }
   },
   methods: {
@@ -93,14 +99,16 @@ export default {
       //});
     },
     objectClickHandler(e){
+      //change poly style block
       this.selObjectsStyles(e.target);
-      console.log(e.target.feature.properties.id);
-      const polyVertexes = Array.from(e.target.feature.geometry.coordinates[0][0]);
+      //create vertexes block
+      let polyVertexes = [...e.target.feature.geometry.coordinates[0][0]];
+      let newVertexes = []
       polyVertexes.forEach(element => {
-        element.reverse()
+        newVertexes.push([...element].reverse())
+        
       });
-      this.vertexes = polyVertexes
-      console.log(JSON.stringify(this.vertexes));
+      this.vertexes = newVertexes;
     },
     selObjectsStyles(clickedLayer){
       if(this.prevLayerClicked){
