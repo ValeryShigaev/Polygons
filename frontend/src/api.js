@@ -28,3 +28,6 @@ export async function getPolyData(fid){
         return false;
     }
 }
+export async function updatePoly(){
+    //vertexIndex, polyIndex, latlng
+}

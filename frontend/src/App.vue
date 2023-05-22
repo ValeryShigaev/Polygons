@@ -18,7 +18,9 @@
         v-for="vertex, index in vertexes"
         :key="index"
         :lat-lng="vertex"
-        :icon="vertexIcon">
+        :icon="vertexIcon"
+        :draggable="true"
+        @dragend="vertexDragEnd(index, $event.target)">
       </l-marker>
     </l-map>
     <template v-if="showPopup">
@@ -69,6 +71,7 @@ export default {
       geojsonPoints: null,
       showPopup: false,
       prevLayerClicked: null,
+      selectedPolyId: null,
       loading: false,
       places: null,
       pop: null,
@@ -81,13 +84,6 @@ export default {
   },
   methods: {
     onEachFeatureFunction(feature, layer) {
-
-      layer.bindTooltip(
-        "<div>" +
-          feature.properties.id +
-          "</div>",
-        { permanent: false, sticky: true }
-      );
       layer.on({
         click: this.objectClickHandler
       });
@@ -102,13 +98,21 @@ export default {
       //change poly style block
       this.selObjectsStyles(e.target);
       //create vertexes block
-      let polyVertexes = [...e.target.feature.geometry.coordinates[0][0]];
+      this.createVertexes(e.target)
+    },
+    createVertexes(polygon){
+      let polyVertexes = polygon.feature.geometry.coordinates[0][0].slice(0, -1);
+      this.selectedPolyId = polygon.feature.properties.id
       let newVertexes = []
       polyVertexes.forEach(element => {
         newVertexes.push([...element].reverse())
         
       });
       this.vertexes = newVertexes;
+    },
+    async vertexDragEnd(index, vertex){
+      //DRAG END AND SEND QUERY
+      console.log(index, vertex.getLatLng());
     },
     selObjectsStyles(clickedLayer){
       if(this.prevLayerClicked){
