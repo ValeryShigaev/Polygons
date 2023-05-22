@@ -7,5 +7,7 @@ from geojson_pydantic import FeatureCollection, Polygon
 from geoalchemy2.elements import WKBElement
 
 
-class PolygonsResult(BaseModel):
-    id: int
+class DataToUpdate(BaseModel):
+    poly_id: int
+    vertex_id: int
+    latlng: list

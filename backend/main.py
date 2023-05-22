@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from db import poly_manager as pm
 from db import point_manager as ptm
-from serializers import poly_to_geojson, points_to_geojson, inside_the_polygon
+from serializers import poly_to_geojson, points_to_geojson, inside_the_polygon, DataToUpdate
 from utils import get_coordinates
 
 from shapely.geometry import Point
@@ -40,3 +40,8 @@ async def poly_info(poly_id: int):
     poly_data = await pm.get_polygons(fid=poly_id)
     points_data = await ptm.get_places()
     return await inside_the_polygon(poly_data, points_data)
+
+@app.post("/poly_update/")
+async def poly_update(poly_id: int, vertex_id: int, latlng: list):
+    return poly_id, vertex_id, latlng
+
