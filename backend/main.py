@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 
 from db import poly_manager as pm
@@ -41,7 +41,14 @@ async def poly_info(poly_id: int):
     points_data = await ptm.get_places()
     return await inside_the_polygon(poly_data, points_data)
 
+
 @app.post("/poly_update/")
-async def poly_update(poly_id: int, vertex_id: int, latlng: list):
-    return poly_id, vertex_id, latlng
+async def poly_update(data: DataToUpdate = Depends()):
+    index = data.poly_id
+    v_index = data.vertex_id
+    latlng = data.latlng
+    await pm.update_polygon(index, v_index, latlng)
+
+
+    return
 

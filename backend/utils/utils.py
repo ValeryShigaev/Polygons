@@ -1,6 +1,6 @@
 from typing import List
 from shapely import wkb, wkt
-from shapely.geometry import mapping, Point
+from shapely.geometry import mapping, Point, MultiPolygon
 from shapely.geometry.polygon import Polygon
 from binascii import unhexlify
 from geoalchemy2.elements import WKBElement
@@ -13,6 +13,13 @@ async def get_coordinates(geom: WKBElement, geom_name: str) -> List:
         return mapping(wkb_geom)["coordinates"][0][0]
     elif geom_name == "Point":
         return mapping(wkb_geom)["coordinates"]
+
+
+async def get_WKB(coordinates: tuple):
+    print(coordinates)
+    polygon = MultiPolygon([Polygon(coordinates)])
+    new = wkb.dumps(polygon, hex=True, srid=4326)
+    return new
 
 
 async def get_intersection_indexes(polygon: list,

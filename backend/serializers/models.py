@@ -10,4 +10,4 @@ from geoalchemy2.elements import WKBElement
 class DataToUpdate(BaseModel):
     poly_id: int
     vertex_id: int
-    latlng: list
+    latlng: list[float]
