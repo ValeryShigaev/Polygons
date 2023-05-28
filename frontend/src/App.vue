@@ -53,7 +53,7 @@
 <script>
 import { LMap, LTileLayer, LGeoJson, LMarker, } from 'vue2-leaflet';
 import { icon } from "leaflet";
-import { getPoly, getPolyData } from './api.js';
+import { getPoly, getPolyData, updatePoly } from './api.js';
 import 'leaflet/dist/leaflet.css';
 
 export default {
@@ -112,7 +112,13 @@ export default {
     },
     async vertexDragEnd(index, vertex){
       //DRAG END AND SEND QUERY
-      console.log(index, vertex.getLatLng());
+      let result = await updatePoly(this.selectedPolyId, index, vertex.getLatLng());
+      //RESULT HANDLE
+      if(result){
+        await this.getPolygons();
+        await this.intersInfo();
+      }
+      
     },
     selObjectsStyles(clickedLayer){
       if(this.prevLayerClicked){
@@ -121,9 +127,19 @@ export default {
       clickedLayer.setStyle({opacity: 0.3})
       this.prevLayerClicked = clickedLayer
     },
-    getPolyInfo(){
-      
-    }
+    async getPolygons(){
+      this.geojsonPoly = await getPoly();
+    },
+    async intersInfo(){
+      this.loading = true;
+      this.showPopup = true;
+      const selInfo = await getPolyData(this.prevLayerClicked.feature.properties.id)
+      this.places = selInfo.places
+      this.pop = selInfo.pop
+      if(selInfo){
+        this.loading = false;
+      }
+    },
     
   },
   computed:{
@@ -136,21 +152,14 @@ export default {
   watch:{
     async prevLayerClicked(){
       if (this.prevLayerClicked){
-        this.loading = true;
-        this.showPopup = true;
-        const selInfo = await getPolyData(this.prevLayerClicked.feature.properties.id)
-        this.places = selInfo.places
-        this.pop = selInfo.pop
-        if(selInfo){
-          this.loading = false;
-        }
+        await this.intersInfo();
       }
       
       
     }
   },
   async created() {
-    this.geojsonPoly = await getPoly();
+    await this.getPolygons();
   }
 }
 </script>
