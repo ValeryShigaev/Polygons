@@ -3,11 +3,13 @@ from sqlalchemy.engine.result import ScalarResult
 
 from models.models import Poly
 from .base import BaseManager
+from .exceptions import all_methods_conrol, db_control
 from utils import get_coordinates, get_WKB
+from geoalchemy2.elements import WKBElement
 
 
 class PolyManager(BaseManager):
-
+    @db_control
     async def get_polygons(self, fid: int = None) -> ScalarResult:
         async with self.async_session() as session:
             async with session.begin():
@@ -18,21 +20,30 @@ class PolyManager(BaseManager):
                 polygons = await session.execute(statement)
         return polygons.scalars()
 
+    @db_control
     async def update_polygon(self, fid: int, v_index: int,
-                             latlng: list[float]):
+                             latlng: list[float]) -> bool:
         poly = await self.get_polygons(fid=fid)
-        geometry = list(poly)[0].geom
+        updated_geom = await self.update_geometry(poly, v_index, latlng)
+        async with self.async_session() as session:
+            try:
+                current = await session.execute(select(Poly).where(Poly.id
+                                                                   == fid))
+                current = current.scalars().one()
+                current.geom = updated_geom
+                await session.commit()
+                return True
+            except Exception as e:
+                await session.rollback()
+                return False
+
+    @classmethod
+    async def update_geometry(cls, polygon: ScalarResult, v_index: int,
+                              latlng: list[float]) -> WKBElement:
+        geometry = list(polygon)[0].geom
         coordinates = await get_coordinates(geometry, "MultiPolygon")
         coordinates = list(coordinates)[:-1]
         coordinates[v_index] = tuple(latlng)
-        coordinates = tuple(coordinates)
-        print(coordinates)
-        updated_geom = await get_WKB(coordinates)
-        print(updated_geom)
-        async with self.async_session() as session:
-            current = await session.execute(select(Poly).where(Poly.id == fid))
-            current = current.scalars().one()
-            current.geom = updated_geom
-            await session.commit()
+        return await get_WKB(tuple(coordinates))
 
 

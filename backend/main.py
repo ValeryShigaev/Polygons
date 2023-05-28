@@ -43,12 +43,6 @@ async def poly_info(poly_id: int):
 
 
 @app.post("/poly_update/")
-async def poly_update(data: DataToUpdate = Depends()):
-    index = data.poly_id
-    v_index = data.vertex_id
-    latlng = data.latlng
-    await pm.update_polygon(index, v_index, latlng)
-
-
-    return
+async def poly_update(data: DataToUpdate = Depends()) -> bool:
+    return await pm.update_polygon(data.poly_id, data.vertex_id, data.latlng)
 
