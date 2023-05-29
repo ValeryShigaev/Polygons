@@ -23,6 +23,11 @@
         @dragend="vertexDragEnd(index, $event.target)">
       </l-marker>
     </l-map>
+    <template v-if="errorMsg">
+      <div class="app_log">
+        <span class="logErr">{{ errorMsg }}</span>
+      </div>
+    </template>
     <template v-if="showPopup">
       <div class="popup">
         <div class="popup_container">
@@ -76,6 +81,7 @@ export default {
       places: null,
       pop: null,
       vertexes: null,
+      errorMsg: null,
       vertexIcon: icon({
         iconUrl: 'vertex-icon.png',
         iconSize: [10, 10],
@@ -87,12 +93,6 @@ export default {
       layer.on({
         click: this.objectClickHandler
       });
-      //layer.on("mouseover", function(e){
-        //layer.setIcon(icons.iconSelected);
-      //});
-      //layer.on("mouseout", function(e){
-        //layer.setIcon(icons.iconStable);
-      //});
     },
     objectClickHandler(e){
       //change poly style block
@@ -111,14 +111,13 @@ export default {
       this.vertexes = newVertexes;
     },
     async vertexDragEnd(index, vertex){
-      //DRAG END AND SEND QUERY
       let result = await updatePoly(this.selectedPolyId, index, vertex.getLatLng());
-      //RESULT HANDLE
       if(result){
         await this.getPolygons();
         await this.intersInfo();
+      }else{
+        this.errorMsg = "Something went wrong! Please try again later..."
       }
-      
     },
     selObjectsStyles(clickedLayer){
       if(this.prevLayerClicked){
@@ -128,7 +127,12 @@ export default {
       this.prevLayerClicked = clickedLayer
     },
     async getPolygons(){
-      this.geojsonPoly = await getPoly();
+        let polygons = await getPoly();
+        if(polygons){
+          this.geojsonPoly = polygons;
+        }else{
+          this.errorMsg = "Something went wrong! Please try again later..."
+        }
     },
     async intersInfo(){
       this.loading = true;
@@ -137,6 +141,9 @@ export default {
       this.places = selInfo.places
       this.pop = selInfo.pop
       if(selInfo){
+        this.loading = false;
+      }else{
+        this.errorMsg = "Something went wrong! Please try again later..."
         this.loading = false;
       }
     },
@@ -154,8 +161,6 @@ export default {
       if (this.prevLayerClicked){
         await this.intersInfo();
       }
-      
-      
     }
   },
   async created() {
