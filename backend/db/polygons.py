@@ -1,5 +1,6 @@
 from sqlalchemy import select
 from sqlalchemy.engine.result import ScalarResult
+from sqlalchemy import event
 
 from models.models import Poly
 from .base import BaseManager
@@ -34,6 +35,7 @@ class PolyManager(BaseManager):
                 await session.commit()
                 return True
             except Exception as e:
+                print(e)
                 await session.rollback()
                 return False
 
@@ -45,5 +47,10 @@ class PolyManager(BaseManager):
         coordinates = list(coordinates)[:-1]
         coordinates[v_index] = tuple(latlng)
         return await get_WKB(tuple(coordinates))
+
+
+
+
+
 
 

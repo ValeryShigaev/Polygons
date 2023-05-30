@@ -1,13 +1,12 @@
 from fastapi import FastAPI, Depends
+from starlette.websockets import WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 
 from db import poly_manager as pm
 from db import point_manager as ptm
-from serializers import poly_to_geojson, points_to_geojson, inside_the_polygon, DataToUpdate
-from utils import get_coordinates
-
-from shapely.geometry import Point
-from shapely.geometry.polygon import Polygon
+from db import sig
+from serializers import (poly_to_geojson, points_to_geojson,
+                         inside_the_polygon, DataToUpdate)
 
 
 app = FastAPI()
@@ -44,5 +43,16 @@ async def poly_info(poly_id: int):
 
 @app.post("/poly_update/")
 async def poly_update(data: DataToUpdate = Depends()) -> bool:
-    return await pm.update_polygon(data.poly_id, data.vertex_id, data.latlng)
+    result = await pm.update_polygon(data.poly_id, data.vertex_id, data.latlng)
+    return result
+
+
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    while True:
+        await sig.wait()
+        if sig:
+            await websocket.send_text(f"Polygons_changed")
+            sig.clear()
 

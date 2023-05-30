@@ -9,4 +9,3 @@ class BaseManager:
                                           echo=True)
         self.async_session = sessionmaker(self.engine, expire_on_commit=False,
                                           class_=AsyncSession)
-
