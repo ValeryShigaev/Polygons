@@ -71,6 +71,7 @@ export default {
   },
   data() {
     return {
+      wscon: null,
       showPoly: true,
       geojsonPoly: null,
       geojsonPoints: null,
@@ -113,7 +114,6 @@ export default {
     async vertexDragEnd(index, vertex){
       let result = await updatePoly(this.selectedPolyId, index, vertex.getLatLng());
       if(result){
-        await this.getPolygons();
         await this.intersInfo();
       }else{
         this.errorMsg = "Something went wrong! Please try again later..."
@@ -164,8 +164,13 @@ export default {
     }
   },
   async created() {
-    await this.getPolygons();
-  }
+    this.wscon = new WebSocket("ws://0.0.0.0:5000/ws")
+    this.wscon.onmessage = async (message) => {
+      this.geojsonPoly = JSON.parse(message.data);
+    }
+    console.log(this.geojsonPoly);
+    console.log(this.wscon)
+  },
 }
 </script>
 
