@@ -50,9 +50,10 @@ async def poly_update(data: DataToUpdate = Depends()) -> bool:
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
+    await websocket.send_json(await get_poly())
     while True:
         await sig.wait()
         if sig:
-            await websocket.send_text(f"Polygons_changed")
+            await websocket.send_json(await get_poly())
             sig.clear()
 
