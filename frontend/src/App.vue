@@ -168,8 +168,6 @@ export default {
     this.wscon.onmessage = async (message) => {
       this.geojsonPoly = JSON.parse(message.data);
     }
-    console.log(this.geojsonPoly);
-    console.log(this.wscon)
   },
 }
 </script>
