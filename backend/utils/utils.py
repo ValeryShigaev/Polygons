@@ -1,9 +1,10 @@
-from typing import List
-from shapely import wkb, wkt
-from shapely.geometry import mapping, Point, MultiPolygon
-from shapely.geometry.polygon import Polygon
 from binascii import unhexlify
+from typing import List
+
 from geoalchemy2.elements import WKBElement
+from shapely import wkb, wkt
+from shapely.geometry import MultiPolygon, Point, mapping
+from shapely.geometry.polygon import Polygon
 
 
 async def get_coordinates(geom: WKBElement, geom_name: str) -> List:

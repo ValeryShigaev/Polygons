@@ -3,7 +3,7 @@ Here is a decorator that returns False on error. There is also a decorator for d
 for methods marked as @classmethod or @staticmethod
 """
 
-from typing import Union, Type
+from typing import Type, Union
 
 
 def db_control(func: callable) -> Union[callable, bool]:

@@ -1,9 +1,10 @@
-from .base import GeojsonBase
-from utils import get_coordinates, get_intersection_indexes
-from db import point_manager as ptm
-
 from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon
+
+from db import point_manager as ptm
+from utils import get_coordinates, get_intersection_indexes
+
+from .base import GeojsonBase
 
 
 class Serializer(GeojsonBase):

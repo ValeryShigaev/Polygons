@@ -1,13 +1,12 @@
-from fastapi import FastAPI, Depends
-from starlette.websockets import WebSocket
+from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.websockets import WebSocket
 
-from db import poly_manager as pm
 from db import point_manager as ptm
+from db import poly_manager as pm
 from db import sig
-from serializers import (poly_to_geojson, points_to_geojson,
-                         inside_the_polygon, DataToUpdate)
-
+from serializers import (DataToUpdate, inside_the_polygon, points_to_geojson,
+                         poly_to_geojson)
 
 app = FastAPI()
 

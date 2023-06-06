@@ -1,8 +1,6 @@
-from sqlalchemy import Column, Integer, Date, Float, String
-
-from sqlalchemy.orm import declarative_base
-
 from geoalchemy2.types import Geometry
+from sqlalchemy import Column, Date, Float, Integer, String
+from sqlalchemy.orm import declarative_base
 
 base = declarative_base()
 

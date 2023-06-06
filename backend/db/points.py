@@ -2,6 +2,7 @@ from sqlalchemy import select
 from sqlalchemy.engine.result import ScalarResult
 
 from models.models import Places
+
 from .base import BaseManager
 
 

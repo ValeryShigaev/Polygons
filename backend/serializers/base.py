@@ -3,6 +3,7 @@ import copy
 from sqlalchemy.engine.result import ScalarResult
 
 from utils import get_coordinates
+
 from .exceptions import serializer_control
 
 

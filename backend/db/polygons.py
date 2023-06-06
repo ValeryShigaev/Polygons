@@ -1,12 +1,12 @@
-from sqlalchemy import select
+from geoalchemy2.elements import WKBElement
+from sqlalchemy import event, select
 from sqlalchemy.engine.result import ScalarResult
-from sqlalchemy import event
 
 from models.models import Poly
+from utils import get_coordinates, get_WKB
+
 from .base import BaseManager
 from .exceptions import all_methods_control, db_control
-from utils import get_coordinates, get_WKB
-from geoalchemy2.elements import WKBElement
 
 
 @all_methods_control(db_control)
