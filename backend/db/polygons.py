@@ -4,13 +4,13 @@ from sqlalchemy import event
 
 from models.models import Poly
 from .base import BaseManager
-from .exceptions import all_methods_conrol, db_control
+from .exceptions import all_methods_control, db_control
 from utils import get_coordinates, get_WKB
 from geoalchemy2.elements import WKBElement
 
 
+@all_methods_control(db_control)
 class PolyManager(BaseManager):
-    @db_control
     async def get_polygons(self, fid: int = None) -> ScalarResult:
         async with self.async_session() as session:
             async with session.begin():
@@ -21,7 +21,6 @@ class PolyManager(BaseManager):
                 polygons = await session.execute(statement)
         return polygons.scalars()
 
-    @db_control
     async def update_polygon(self, fid: int, v_index: int,
                              latlng: list[float]) -> bool:
         poly = await self.get_polygons(fid=fid)
@@ -40,6 +39,7 @@ class PolyManager(BaseManager):
                 return False
 
     @classmethod
+    @db_control
     async def update_geometry(cls, polygon: ScalarResult, v_index: int,
                               latlng: list[float]) -> WKBElement:
         geometry = list(polygon)[0].geom
