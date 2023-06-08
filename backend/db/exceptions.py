@@ -1,6 +1,7 @@
 """
-Here is a decorator that returns False on error. There is also a decorator for decorating class methods, except
-for methods marked as @classmethod or @staticmethod
+Here is a decorator that returns False on error. There is also a decorator for
+decorating class methods, except for methods marked as @classmethod
+or @staticmethod
 """
 
 from typing import Type, Union

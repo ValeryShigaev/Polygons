@@ -1,3 +1,5 @@
+""" Database connection settings """
+
 from config import settings
 
 DATABASE_URL = (
