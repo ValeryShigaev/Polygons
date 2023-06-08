@@ -1,4 +1,5 @@
 """ Database event listeners """
+
 import asyncio
 
 from sqlalchemy import event
