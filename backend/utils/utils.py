@@ -1,3 +1,5 @@
+""" Here is project business logic """
+
 from binascii import unhexlify
 from typing import List
 
@@ -7,7 +9,18 @@ from shapely.geometry import MultiPolygon, Point, mapping
 from shapely.geometry.polygon import Polygon
 
 
-async def get_coordinates(geom: WKBElement, geom_name: str) -> List:
+async def get_coordinates(geom: WKBElement, geom_name: str) -> list:
+    """
+    This function converts WKBElement to a list of coordinates
+
+    :param geom: input geometry
+    :type geom: WKBElement
+    :param geom_name: MultiPolygon or Point
+    :type geom_name: str
+
+    :rtype: list
+    """
+
     bytes_geom = unhexlify(str(geom))
     wkb_geom = wkb.loads(bytes_geom)
     if geom_name == "MultiPolygon":
@@ -16,15 +29,34 @@ async def get_coordinates(geom: WKBElement, geom_name: str) -> List:
         return mapping(wkb_geom)["coordinates"]
 
 
-async def get_WKB(coordinates: tuple):
-    print(coordinates)
+async def get_WKB(coordinates: tuple) -> WKBElement:
+    """
+    This function converts list of coordinates to a WKBElement
+
+    :param coordinates: input coordinates
+    :type coordinates: tuple
+
+    :rtype: WKBElement
+    """
+
     polygon = MultiPolygon([Polygon(coordinates)])
     new = wkb.dumps(polygon, hex=True, srid=4326)
     return new
 
 
 async def get_intersection_indexes(polygon: list,
-                                   points: list[Point]) -> list[int]:
+                                   points: list) -> list[int]:
+    """
+    This function returns indices of points that are inside the polygon
+
+    :param polygon: input coordinates
+    :type polygon: list
+    :param points: all points
+    :type points: list
+
+    :rtype: list[int]
+    """
+
     indexes = list()
     coords = list()
     points_list = list()
