@@ -1,9 +1,10 @@
 import copy
+from typing import Union
 
 from sqlalchemy.engine.result import ScalarResult
 
 from utils import get_coordinates
-
+from models.models import Poly, Places
 from .exceptions import serializer_control
 
 
@@ -24,7 +25,7 @@ class GeojsonBase:
         pt_feature: structure of Point feature
         :type pt_feature: dict
     Methods:
-        serialize: this method used to serialize ScalarResult to GeoJson,
+        serialize: this method used for serialize ScalarResult to GeoJson,
             receives data of the ScalarResult type as input, as well as a list
             of fields that need to be serialized
         serialize_feature: creates separate features for each feature in
@@ -61,6 +62,19 @@ class GeojsonBase:
 
     @serializer_control
     async def serialize(self, obj: ScalarResult, fields: list[str]) -> dict:
+        """
+        This method used for serialize ScalarResult to GeoJson,
+        receives data of the ScalarResult type as input, as well as a list
+        of fields that need to be serialized
+
+        :param obj: object for serialize
+        :type obj: ScalarResult
+        :param fields: list of fields that will be added to the object
+                       properties
+        :type fields: list[str]
+        :rtype: dict
+        """
+
         geojson = copy.deepcopy(self.struct)
         for feature in list(obj):
             if self.geometry == "Point":
@@ -79,7 +93,22 @@ class GeojsonBase:
                 geojson["features"].append(new_feature)
         return geojson
 
-    async def serialize_feature(self, feature, fields, new_feature):
+    async def serialize_feature(self, feature: Union[Poly, Places],
+                                fields: list[str],
+                                new_feature: dict) -> dict:
+        """
+        Creates separate features for each feature in the data
+
+        :param feature: object for serialize
+        :type feature: Union[Poly, Places]
+        :param fields: list of fields that will be added to the object
+                       properties
+        :type fields: list[str]
+        :param new_feature: GeoJson feature templated dictionary
+        :type new_feature: dict
+        :returns: new_feature
+        """
+
         for field in fields:
             f_fields = await self.get_values(feature)
             new_feature["properties"][field] = f_fields[field]
@@ -92,11 +121,24 @@ class GeojsonBase:
         return new_feature
 
     @classmethod
-    async def get_values(cls, model) -> dict:
+    async def get_values(cls, model: Union[Poly, Places]) -> dict:
+        """
+        This class method returns a dict of model fields and values
+
+        :param model: db object
+        :type model: Union[Poly, Places]
+        :rtype: dict
+        """
+
         return dict((column.name, getattr(model, column.name))
                     for column in model.__table__.columns)
 
     def check_geometry(self):
+        """
+        Method of checking the correctness of the declared geometry
+        Raises: Exception("Only 'Point' or 'MultiPolygon' types are supported")
+        """
+
         if self.geometry not in ["MultiPolygon", "Point"]:
             raise Exception("Only 'Point' or 'MultiPolygon' types "
                             "are supported")

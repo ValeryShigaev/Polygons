@@ -1,4 +1,19 @@
+"""
+Here is a decorator that raises exception if the declared field is not in
+the model
+"""
+
+
 def serializer_control(func: callable) -> callable:
+    """
+    Decorator that raises exception if the declared field is not in
+    the model
+
+    :param func: wrapped function
+    :type func: callable
+    :returns: func
+    """
+
     async def wrapper(*args, **kwargs) -> None:
         try:
             return await func(*args, **kwargs)

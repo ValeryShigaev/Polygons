@@ -1,7 +1,5 @@
-from typing import Dict, Optional
+""" Pydantic models """
 
-from geoalchemy2.elements import WKBElement
-from geojson_pydantic import FeatureCollection, Polygon
 from pydantic import BaseModel, PositiveInt, validator
 
 
