@@ -1,3 +1,5 @@
+""" Here is DB models """
+
 from geoalchemy2.types import Geometry
 from sqlalchemy import Column, Date, Float, Integer, String
 from sqlalchemy.orm import declarative_base
@@ -6,6 +8,7 @@ base = declarative_base()
 
 
 class Poly(base):
+
     __tablename__ = "poly"
 
     id = Column(Integer, primary_key=True)
