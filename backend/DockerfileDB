@@ -1,0 +1,15 @@
+FROM postgis/postgis
+
+COPY . .
+WORKDIR /usr/src/app/backend/db
+
+ADD ./db/backups/polygons_dump.sql /docker-entrypoint-initdb.d/
+
+RUN chown postgres:postgres /docker-entrypoint-initdb.d/polygons_dump.sql
+
+EXPOSE 5432
+
+
+
+
+
