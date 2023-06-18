@@ -1,5 +1,6 @@
+""" App router """
+
 from fastapi.routing import APIRouter
-from typing import Type
 
 import routing.endpoints as endpoints
 
