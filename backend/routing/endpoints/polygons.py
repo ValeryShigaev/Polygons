@@ -6,7 +6,8 @@ from starlette.websockets import WebSocket
 from db import poly_manager as pm
 from db import point_manager as ptm
 from db import sig
-from serializers import poly_to_geojson, inside_the_polygon, DataToUpdate
+from serializers import (poly_to_geojson, inside_the_polygon, DataToUpdate,
+                         GeoJsonPolygons, IntersectionData)
 
 router = APIRouter(
     tags=["Polygons"],
@@ -14,7 +15,7 @@ router = APIRouter(
 )
 
 
-@router.get("/")
+@router.get("/", response_model=GeoJsonPolygons)
 async def get_poly():
     """
     Returns all polygons
@@ -26,7 +27,7 @@ async def get_poly():
     return await poly_to_geojson(db_data)
 
 
-@router.get("/poly_info/{poly_id}")
+@router.get("/poly_info/{poly_id}", response_model=IntersectionData)
 async def poly_info(poly_id: int) -> dict:
     """
     Returns points(places) which are inside the polygon

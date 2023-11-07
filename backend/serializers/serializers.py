@@ -6,6 +6,8 @@ from sqlalchemy.engine.result import ScalarResult
 
 from .geojson_serializers import Serializer
 
+from .models import GeoJsonPoints
+
 mp = Serializer("MultiPolygon")
 mpt = Serializer("Point")
 
